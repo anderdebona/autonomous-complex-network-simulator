@@ -4,6 +4,9 @@
   "description": "PhD-Grade Complex Networks Simulator (Barabási-Albert Scale-Free, Watts-Strogatz Small-World, Percolation Cascade & Self-Healing Topology Engine)",
   "main": "dist/server.js",
   "type": "module",
+  "bin": {
+    "complex-network": "./dist/cli.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
