@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Complex Network & Percolation Simulator | anderdebona</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070a12;
+      --panel: rgba(15, 23, 42, 0.75);
+      --border: rgba(99, 102, 241, 0.2);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --cyan: #06b6d4;
+      --green: #10b981;
+      --red: #ef4444;
+      --text: #f8fafc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 2rem; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+    .brand { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; }
+    .btn { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer; }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    pre { background: rgba(2, 6, 23, 0.9); border: 1px solid var(--border); padding: 1rem; border-radius: 0.5rem; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #a5f3fc; max-height: 250px; }
+    canvas { background: #020617; border: 1px solid var(--border); border-radius: 0.75rem; width: 100%; height: 320px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="brand">🌐 Autonomous Complex Networks & Percolation Simulator</div>
+      <div style="font-size: 0.85rem; color: #94a3b8;">Barabási–Albert Scale-Free Topology & Cascade Resilience • anderdebona</div>
+    </div>
+    <span style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(129, 140, 248, 0.3); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700;">Complex Systems Suite</span>
+  </header>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>1. Scale-Free Network Canvas Visualizer</h2>
+      <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.5rem; margin-bottom: 1rem;">
+        Barabási–Albert Preferential Attachment Model $P(k) \sim k^{-3}$.
+      </p>
+      <canvas id="networkCanvas"></canvas>
+      <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+        <button class="btn" onclick="generateNetwork()">Generate Scale-Free Network</button>
+        <button class="btn btn-danger" onclick="simulateCascade()">Simulate Hub Attack Cascade</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>2. Graph Centrality & Percolation Metrics</h2>
+      <pre id="metricsOutput">Generate a network to view Betweenness Centrality, Clustering Coefficients, and Hub analytics...</pre>
+
+      <h2 style="margin-top: 1.5rem;">Percolation Cascade Status</h2>
+      <pre id="percolationOutput">Awaiting cascade failure simulation...</pre>
+    </div>
+  </div>
+
+  <script>
+    let graphData = null;
+
+    async function generateNetwork() {
+      const res = await fetch('/api/network/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ n: 25, m: 2 })
+      });
+      const data = await res.json();
+      graphData = data;
+      
+      document.getElementById('metricsOutput').innerText = JSON.stringify(data.metrics.slice(0, 5), null, 2);
+      drawCanvas(data);
+    }
+
+    async function simulateCascade() {
+      if (!graphData) await generateNetwork();
+      const topHub = graphData.metrics.find(m => m.isHub) || graphData.metrics[0];
+
+      const res = await fetch('/api/network/cascade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetHubId: topHub.nodeId })
+      });
+      const data = await res.json();
+      document.getElementById('percolationOutput').innerText = JSON.stringify(data, null, 2);
+    }
+
+    function drawCanvas(data) {
+      const canvas = document.getElementById('networkCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const nodes = data.nodes;
+      const positions = {};
+
+      nodes.forEach((n, idx) => {
+        const angle = (idx / nodes.length) * 2 * Math.PI;
+        const radius = 110;
+        positions[n.id] = {
+          x: canvas.width / 2 + radius * Math.cos(angle),
+          y: canvas.height / 2 + radius * Math.sin(angle)
+        };
+      });
+
+      // Draw edges
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.25)';
+      ctx.lineWidth = 1;
+      nodes.forEach(n => {
+        const p1 = positions[n.id];
+        n.neighbors.forEach(nbr => {
+          const p2 = positions[nbr];
+          if (p2) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        });
+      });
+
+      // Draw nodes
+      nodes.forEach(n => {
+        const p = positions[n.id];
+        const isHub = n.degree > 3;
+        ctx.fillStyle = isHub ? '#06b6d4' : '#6366f1';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, isHub ? 8 : 4, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+    }
+
+    window.onload = generateNetwork;
+  </script>
+</body>
+</html>

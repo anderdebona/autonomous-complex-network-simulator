@@ -1,0 +1,35 @@
+{
+  "name": "autonomous-complex-network-simulator",
+  "version": "1.0.0",
+  "description": "PhD-Grade Complex Networks Simulator (Barabási-Albert Scale-Free, Watts-Strogatz Small-World, Percolation Cascade & Self-Healing Topology Engine)",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "complex-networks",
+    "barabasi-albert",
+    "watts-strogatz",
+    "scale-free-networks",
+    "percolation-theory",
+    "cascade-failures",
+    "graph-theory",
+    "betweenness-centrality"
+  ],
+  "author": "anderdebona",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^5.3.3",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "vitest": "^1.2.0"
+  }
+}
