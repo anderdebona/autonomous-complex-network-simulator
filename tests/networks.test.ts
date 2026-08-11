@@ -60,3 +60,20 @@ describe('SIR Epidemic Spreading', () => {
     expect(lastStep.infected).toBe(0);
   });
 });
+
+import { PageRankEngine } from '../src/networks/pagerank.js';
+
+describe('PageRank Engine', () => {
+  it('should compute PageRank scores summing to ~1', () => {
+    const graph = ComplexNetworkGenerator.generateBarabasiAlbert(15, 2);
+    const ranks = PageRankEngine.compute(graph);
+    const totalRank = ranks.reduce((s, r) => s + r.rank, 0);
+    expect(totalRank).toBeCloseTo(1.0, 1);
+    expect(ranks[0].rank).toBeGreaterThanOrEqual(ranks[ranks.length - 1].rank);
+  });
+  it('should rank hub nodes higher', () => {
+    const graph = ComplexNetworkGenerator.generateBarabasiAlbert(20, 2);
+    const ranks = PageRankEngine.compute(graph);
+    expect(ranks[0].rank).toBeGreaterThan(ranks[ranks.length - 1].rank);
+  });
+});
