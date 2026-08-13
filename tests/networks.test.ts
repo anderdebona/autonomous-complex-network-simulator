@@ -77,3 +77,46 @@ describe('PageRank Engine', () => {
     expect(ranks[0].rank).toBeGreaterThan(ranks[ranks.length - 1].rank);
   });
 });
+
+describe('HyperbolicGeometryGraphEmbedder (v4.0.0)', () => {
+  it('should embed network into Poincare disk and calculate hyperbolic distance', async () => {
+    const { HyperbolicGeometryGraphEmbedder } = await import('../src/networks/hyperbolic-embedder.js');
+    const mockGraph = {
+      nodes: new Map([
+        ['Hub', { id: 'Hub', neighbors: ['N1', 'N2', 'N3'] }],
+        ['N1', { id: 'N1', neighbors: ['Hub'] }],
+        ['N2', { id: 'N2', neighbors: ['Hub'] }],
+        ['N3', { id: 'N3', neighbors: ['Hub'] }],
+      ]),
+    };
+
+    const coords = HyperbolicGeometryGraphEmbedder.embed(mockGraph);
+    expect(coords.length).toBe(4);
+    const hubCoord = coords.find(c => c.id === 'Hub')!;
+    const leafCoord = coords.find(c => c.id === 'N1')!;
+    expect(hubCoord.radius).toBeLessThan(leafCoord.radius);
+
+    const dist = HyperbolicGeometryGraphEmbedder.hyperbolicDistance(hubCoord, leafCoord);
+    expect(dist).toBeGreaterThan(0);
+  });
+});
+
+describe('InformationCascadeSimulator (v4.0.0)', () => {
+  it('should simulate viral spread across neighbors in independent cascade model', async () => {
+    const { InformationCascadeSimulator } = await import('../src/networks/cascade-simulator.js');
+    const mockGraph = {
+      nodes: new Map([
+        ['Seed', { id: 'Seed', neighbors: ['A', 'B'] }],
+        ['A', { id: 'A', neighbors: ['Seed', 'C'] }],
+        ['B', { id: 'B', neighbors: ['Seed'] }],
+        ['C', { id: 'C', neighbors: ['A'] }],
+      ]),
+    };
+
+    const sim = new InformationCascadeSimulator(1.0); // 100% propagation for deterministic test
+    const steps = sim.simulateCascade(mockGraph, ['Seed'], 5);
+    expect(steps.length).toBeGreaterThan(1);
+    expect(steps[steps.length - 1].totalActivatedCount).toBe(4);
+  });
+});
+
