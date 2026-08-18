@@ -5,7 +5,7 @@ authors:
     given-names: "Anderson"
     alias: "anderdebona"
 title: "Autonomous Complex Network Simulator: Poincaré Hyperbolic Embeddings & Viral Cascade Contagion"
-version: 4.0.0
-date-released: 2026-08-13
+version: 5.0.0
+date-released: 2026-08-18
 url: "https://github.com/anderdebona/autonomous-complex-network-simulator"
 license: MIT

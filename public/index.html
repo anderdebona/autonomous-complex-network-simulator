@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complex Networks & Poincaré Hyperbolic Studio | anderdebona</title>
+  <title>Complex Networks & Poincaré Hyperbolic Studio v5.0.0 | anderdebona</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #030712;
-      --panel: rgba(15, 23, 42, 0.8);
+      --panel: rgba(15, 23, 42, 0.85);
       --border: rgba(168, 85, 247, 0.25);
       --accent: #a855f7;
       --cyan: #06b6d4;
       --green: #10b981;
+      --amber: #f59e0b;
       --red: #f43f5e;
       --text: #f9fafb;
       --text-dim: #94a3b8;
@@ -23,18 +24,18 @@
     .brand { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .status-badge { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; border: 1px solid rgba(216, 180, 254, 0.3); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; }
 
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-    .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; text-align: center; }
-    .stat-val { font-size: 1.8rem; font-weight: 700; font-family: 'Fira Code', monospace; color: #c084fc; margin-top: 0.25rem; }
-    .stat-lbl { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+    .stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.85rem; text-align: center; }
+    .stat-val { font-size: 1.5rem; font-weight: 700; font-family: 'Fira Code', monospace; color: #c084fc; margin-top: 0.2rem; }
+    .stat-lbl { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
 
     .main-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1.5rem; }
-    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; backdrop-filter: blur(12px); }
-    .panel-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; color: #e9d5ff; }
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; backdrop-filter: blur(12px); margin-bottom: 1.5rem; }
+    .panel-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; color: #e9d5ff; }
 
     canvas { width: 100%; height: 230px; background: rgba(2, 6, 23, 0.95); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 0.5rem; display: block; margin-bottom: 1rem; }
 
-    .btn { background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: 0.2s all; }
+    .btn { background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; padding: 0.55rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: 0.2s all; font-size: 0.85rem; }
     .btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3); }
     .btn-red { background: linear-gradient(135deg, #f43f5e, #be123c); }
     .btn-green { background: linear-gradient(135deg, #10b981, #059669); }
@@ -46,8 +47,8 @@
 <body>
   <header>
     <div>
-      <div class="brand">🌐 Complex Networks & Poincaré Hyperbolic Studio 🧬</div>
-      <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 0.2rem;">Barabási-Albert Scale-Free • Poincaré Disk H^2 Embeddings • Viral Cascade Diffusion • by anderdebona</div>
+      <div class="brand">🌐 Complex Networks & Poincaré Hyperbolic Studio v5.0.0 🧬</div>
+      <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 0.2rem;">Louvain Modularity • Molloy-Reed Percolation Phase Transition • Poincaré H² • by anderdebona</div>
     </div>
     <span class="status-badge">● Scale-Free Topology P(k) ~ k^(-3)</span>
   </header>
@@ -58,99 +59,69 @@
       <div class="stat-val" id="statNodes">25</div>
     </div>
     <div class="stat-card">
-      <div class="stat-lbl">Hubs Identified</div>
-      <div class="stat-val" style="color: var(--cyan);" id="statHubs">3 Hubs</div>
+      <div class="stat-lbl">Louvain Modularity (Q)</div>
+      <div class="stat-val" style="color: var(--cyan);" id="statModularity">0.00</div>
     </div>
     <div class="stat-card">
-      <div class="stat-lbl">Percolation State</div>
-      <div class="stat-val" style="color: var(--green);" id="statPerc">CONNECTED</div>
+      <div class="stat-lbl">Communities</div>
+      <div class="stat-val" style="color: var(--green);" id="statCommunities">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-lbl">Curvature Metric</div>
-      <div class="stat-val">Negative (K &lt; 0)</div>
+      <div class="stat-lbl">Molloy-Reed Threshold</div>
+      <div class="stat-val" style="color: var(--amber);" id="statPc">0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Avg Clustering (C)</div>
+      <div class="stat-val" id="statClustering">0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Network Resilient</div>
+      <div class="stat-val" style="color: var(--green);" id="statResilience">YES</div>
     </div>
   </div>
 
   <div class="main-grid">
     <div class="panel">
       <div class="panel-title">
-        <span>🌌 Poincaré Disk Hyperbolic Embedding Canvas</span>
-        <span style="font-size: 0.75rem; color: var(--text-dim);">Non-Euclidean H^2</span>
+        <span>🌌 Poincaré Hyperbolic Disk $\mathbb{H}^2$ & Community Clusters</span>
+        <span style="font-size: 0.8rem; color: var(--text-dim);">Curvature K = -1</span>
       </div>
-      <canvas id="diskCanvas"></canvas>
+      <canvas id="hyperbolicCanvas" width="500" height="260"></canvas>
+
       <div class="controls">
-        <button class="btn" onclick="generateNetwork(25, 2)">Regenerate (N=25)</button>
-        <button class="btn btn-green" onclick="runViralCascade()">🚀 Launch Viral Contagion</button>
-        <button class="btn btn-red" onclick="runTargetedAttack()">⚠️ Targeted Hub Attack</button>
+        <button class="btn" onclick="generateNetwork(30, 2)">🔄 Generate Scale-Free (N=30)</button>
+        <button class="btn btn-green" onclick="runViralCascade()">⚡ Viral Cascade</button>
+        <button class="btn btn-red" onclick="attackHub()">🎯 Targeted Hub Attack</button>
       </div>
-      <div class="panel-title" style="margin-top: 1rem;"><span>📊 Centrality & Metrics Breakdown</span></div>
-      <pre id="metricsLog">Generating network...</pre>
+
+      <div class="panel-title" style="margin-top: 1rem;">
+        <span>🔥 Percolation Phase Transition Curve $S(p)$ vs $p$</span>
+      </div>
+      <canvas id="percolationCanvas" width="500" height="180"></canvas>
     </div>
 
     <div class="panel">
       <div class="panel-title">
-        <span>📣 Viral Information Cascade Timeline (ICM)</span>
+        <span>🧩 Louvain Community Structure (v5.0.0)</span>
       </div>
-      <pre id="cascadeLog">Click Launch Viral Contagion to simulate spreading...</pre>
+      <pre id="louvainLog">Generating community partitions...</pre>
 
-      <div class="panel-title" style="margin-top: 1.25rem;">
-        <span>📐 Poincaré Geodesic Coordinates</span>
+      <div class="panel-title" style="margin-top: 1rem;">
+        <span>📊 Molloy-Reed Critical Singularity Audit</span>
       </div>
-      <pre id="coordsLog">Loading hyperbolic coordinates...</pre>
+      <pre id="phaseLog">Awaiting percolation analysis...</pre>
+
+      <div class="panel-title" style="margin-top: 1rem;">
+        <span>📜 Live Network Topology Metrics</span>
+      </div>
+      <pre id="metricsLog">Awaiting metrics...</pre>
     </div>
   </div>
 
   <script>
-    const canvas = document.getElementById('diskCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = canvas.offsetWidth;
-    canvas.height = 230;
-
     let networkData = null;
-    let activatedNodes = new Set();
 
-    function drawPoincare() {
-      ctx.fillStyle = 'rgba(2, 6, 23, 0.95)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2;
-      const R = 85;
-
-      // Draw Poincare boundary circle
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(168, 85, 247, 0.4)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Draw internal hyperbolic geodesics
-      [0.3, 0.6, 0.85].forEach(rRatio => {
-        ctx.beginPath();
-        ctx.arc(cx, cy, R * rRatio, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(6, 182, 212, 0.15)';
-        ctx.stroke();
-      });
-
-      if (networkData && networkData.hyperbolicCoords) {
-        // Draw nodes
-        networkData.hyperbolicCoords.forEach(n => {
-          const nx = cx + n.x * R;
-          const ny = cy + n.y * R;
-          const isAct = activatedNodes.has(n.id);
-
-          ctx.beginPath();
-          ctx.arc(nx, ny, isAct ? 5 : 3.5, 0, Math.PI * 2);
-          ctx.fillStyle = isAct ? '#f43f5e' : (n.radius < 0.3 ? '#06b6d4' : '#a855f7');
-          ctx.fill();
-        });
-      }
-      requestAnimationFrame(drawPoincare);
-    }
-    drawPoincare();
-
-    async function generateNetwork(n, m) {
-      activatedNodes.clear();
+    async function generateNetwork(n = 25, m = 2) {
       const res = await fetch('/api/network/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -159,11 +130,122 @@
       networkData = await res.json();
 
       document.getElementById('statNodes').innerText = networkData.nodeCount;
-      const hubCount = networkData.metrics.filter(m => m.isHub).length;
-      document.getElementById('statHubs').innerText = `${hubCount} Hubs`;
+      document.getElementById('statModularity').innerText = networkData.louvain?.modularity ?? '0.00';
+      document.getElementById('statCommunities').innerText = networkData.louvain?.communityCount ?? 0;
+      document.getElementById('statPc').innerText = networkData.phaseTransition?.molloyReedThreshold ?? '0.00';
+      document.getElementById('statClustering').innerText = (networkData.metrics?.averageClusteringCoefficient || 0).toFixed(3);
+      document.getElementById('statResilience').innerText = networkData.phaseTransition?.isResilient ? 'YES' : 'NO';
 
-      document.getElementById('metricsLog').innerText = JSON.stringify(networkData.metrics.slice(0, 8), null, 2);
-      document.getElementById('coordsLog').innerText = JSON.stringify(networkData.hyperbolicCoords.slice(0, 6), null, 2);
+      document.getElementById('louvainLog').innerText = JSON.stringify(networkData.louvain, null, 2);
+      document.getElementById('phaseLog').innerText = JSON.stringify({
+        molloyReedThreshold: networkData.phaseTransition?.molloyReedThreshold,
+        empiricalCriticalPoint: networkData.phaseTransition?.empiricalCriticalPoint,
+        firstMoment_k: networkData.phaseTransition?.degreeFirstMoment,
+        secondMoment_k2: networkData.phaseTransition?.degreeSecondMoment
+      }, null, 2);
+      document.getElementById('metricsLog').innerText = JSON.stringify(networkData.metrics, null, 2);
+
+      drawPoincareDisk();
+      drawPercolationCurve();
+    }
+
+    function drawPoincareDisk() {
+      const canvas = document.getElementById('hyperbolicCanvas');
+      const ctx = canvas.getContext('2d');
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const r = Math.min(cx, cy) - 20;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Boundary circle
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      const palette = ['#c084fc', '#06b6d4', '#10b981', '#f59e0b', '#f43f5e', '#ec4899'];
+
+      if (!networkData || !networkData.hyperbolicCoords) return;
+
+      // Draw edges
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.2)';
+      ctx.lineWidth = 1;
+      (networkData.edges || []).forEach(e => {
+        const u = networkData.hyperbolicCoords.find(c => c.nodeId === e.source);
+        const v = networkData.hyperbolicCoords.find(c => c.nodeId === e.target);
+        if (u && v) {
+          ctx.beginPath();
+          ctx.moveTo(cx + u.u * r * 0.9, cy + u.v * r * 0.9);
+          ctx.lineTo(cx + v.u * r * 0.9, cy + v.v * r * 0.9);
+          ctx.stroke();
+        }
+      });
+
+      // Draw nodes
+      networkData.hyperbolicCoords.forEach(c => {
+        const x = cx + c.u * r * 0.9;
+        const y = cy + c.v * r * 0.9;
+        const comm = (networkData.louvain?.assignments || {})[c.nodeId] || 0;
+        const color = palette[comm % palette.length];
+
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+    }
+
+    function drawPercolationCurve() {
+      const canvas = document.getElementById('percolationCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const curve = networkData?.phaseTransition?.curve || [];
+      if (curve.length === 0) return;
+
+      const pad = 30;
+      const w = canvas.width - 2 * pad;
+      const h = canvas.height - 2 * pad;
+
+      // Axes
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.beginPath();
+      ctx.moveTo(pad, pad);
+      ctx.lineTo(pad, pad + h);
+      ctx.lineTo(pad + w, pad + h);
+      ctx.stroke();
+
+      // Plot S(p)
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      curve.forEach((pt, i) => {
+        const x = pad + pt.p * w;
+        const y = pad + h - pt.giantComponentFraction * h;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Draw critical point line
+      const pc = networkData.phaseTransition.molloyReedThreshold;
+      const pcX = pad + pc * w;
+      ctx.strokeStyle = '#f43f5e';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(pcX, pad);
+      ctx.lineTo(pcX, pad + h);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#f43f5e';
+      ctx.font = '10px monospace';
+      ctx.fillText(`pc = ${pc}`, pcX + 4, pad + 15);
     }
 
     async function runViralCascade() {
@@ -173,31 +255,20 @@
         body: JSON.stringify({ seedNodes: ['Node-0'], propProb: 0.5 })
       });
       const data = await res.json();
-      document.getElementById('cascadeLog').innerText = JSON.stringify(data.cascadeSteps, null, 2);
-
-      // Animate active nodes
-      data.cascadeSteps.forEach((step, idx) => {
-        setTimeout(() => {
-          step.newlyActivated.forEach(id => activatedNodes.add(id));
-        }, idx * 250);
-      });
+      document.getElementById('louvainLog').innerText = JSON.stringify(data, null, 2);
     }
 
-    async function runTargetedAttack() {
+    async function attackHub() {
       const res = await fetch('/api/network/cascade', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ targetHubId: 'Node-0' })
       });
       const data = await res.json();
-      document.getElementById('statPerc').innerText = data.giantComponentRatio < 0.5 ? 'FRAGMENTED' : 'RESILIENT';
-      document.getElementById('statPerc').style.color = data.giantComponentRatio < 0.5 ? '#f43f5e' : '#10b981';
-      document.getElementById('cascadeLog').innerText = JSON.stringify(data, null, 2);
+      document.getElementById('louvainLog').innerText = JSON.stringify(data, null, 2);
     }
 
-    window.onload = () => {
-      generateNetwork(25, 2);
-    };
+    window.onload = () => generateNetwork(25, 2);
   </script>
 </body>
 </html>

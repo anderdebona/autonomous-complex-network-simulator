@@ -120,3 +120,46 @@ describe('InformationCascadeSimulator (v4.0.0)', () => {
   });
 });
 
+describe('LouvainHierarchicalEngine (v5.0.0)', () => {
+  it('should partition a 2-clique network into two distinct modular communities', async () => {
+    const { LouvainHierarchicalEngine } = await import('../src/networks/louvain-hierarchical.js');
+    // Community 1: A, B, C (densely connected)
+    // Community 2: X, Y, Z (densely connected)
+    // Bridge: C - X
+    const nodes = ['A', 'B', 'C', 'X', 'Y', 'Z'];
+    const edges = [
+      { source: 'A', target: 'B' }, { source: 'B', target: 'C' }, { source: 'C', target: 'A' },
+      { source: 'X', target: 'Y' }, { source: 'Y', target: 'Z' }, { source: 'Z', target: 'X' },
+      { source: 'C', target: 'X' }
+    ];
+
+    const res = LouvainHierarchicalEngine.detectCommunities(nodes, edges);
+    expect(res.modularity).toBeGreaterThan(0.2);
+    expect(res.communityCount).toBe(2);
+    expect(res.communities.get('A')).toBe(res.communities.get('B'));
+    expect(res.communities.get('X')).toBe(res.communities.get('Y'));
+    expect(res.communities.get('A')).not.toBe(res.communities.get('X'));
+  });
+});
+
+describe('PercolationPhaseTransitionEngine (v5.0.0)', () => {
+  it('should compute Molloy-Reed critical threshold and phase transition curve', async () => {
+    const { PercolationPhaseTransitionEngine } = await import('../src/networks/percolation-phase-transition.js');
+    const nodes = ['N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8'];
+    const edges = [
+      { source: 'N1', target: 'N2' }, { source: 'N2', target: 'N3' },
+      { source: 'N3', target: 'N4' }, { source: 'N4', target: 'N1' },
+      { source: 'N5', target: 'N6' }, { source: 'N6', target: 'N7' },
+      { source: 'N7', target: 'N8' }, { source: 'N8', target: 'N5' },
+      { source: 'N1', target: 'N5' }, { source: 'N2', target: 'N6' },
+    ];
+
+    const analysis = PercolationPhaseTransitionEngine.analyzePhaseTransition(nodes, edges, 10);
+    expect(analysis.molloyReedThreshold).toBeGreaterThan(0);
+    expect(analysis.molloyReedThreshold).toBeLessThanOrEqual(1);
+    expect(analysis.curve.length).toBe(10);
+    expect(analysis.degreeFirstMoment).toBeGreaterThan(0);
+  });
+});
+
+

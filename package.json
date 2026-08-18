@@ -1,7 +1,7 @@
 {
   "name": "autonomous-complex-network-simulator",
-  "version": "4.0.0",
-  "description": "PhD-Grade Complex Networks Simulator (Barabási-Albert Scale-Free, Watts-Strogatz Small-World, Percolation Cascade & Self-Healing Topology Engine)",
+  "version": "5.0.0",
+  "description": "PhD-Grade Complex Networks & Percolation Simulator (Louvain Hierarchical Modularity, Molloy-Reed Phase Transition, Poincaré Disk H^2 Embeddings & Cascade Dynamics)",
   "main": "dist/server.js",
   "type": "module",
   "bin": {
